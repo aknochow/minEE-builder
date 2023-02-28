@@ -17,7 +17,6 @@ make \
 nano \
 podman \
 podman-docker \
-python3 \
 python3.9 \
 shadow-utils \
 tree \
@@ -66,8 +65,7 @@ RUN mkdir -p /var/lib/shared/overlay-images \
 
 ENV _CONTAINERS_USERNS_CONFIGURED=""
 
-# In OpenShift, container will run as a random uid number and gid 0. Make sure things
-# are writeable by the root group.
+# Ansible runner
 RUN for dir in \
       /home/runner \
       /home/runner/.ansible \
@@ -87,25 +85,13 @@ RUN for file in \
       /etc/group ; \
     do touch $file ; chmod g+rw $file ; chgrp root $file ; done
 
-WORKDIR /tmp
-
-# Collections
-RUN ansible-galaxy collection download \ 
-ansible.posix \
-community.docker \
-community.general \
-community.kubernetes 
-RUN cd collections && ansible-galaxy collection install -r requirements.yml
-RUN rm -rf collections
-
+# Podman
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
-
 RUN mkdir -p /home/runner/.local/share/containers && \
     chown runner:root -R /home/runner && \
     chmod 644 /etc/containers/containers.conf
-
 # Copy & modify the defaults to provide reference if runtime changes needed.
 # Changes here are required for running with fuse-overlay storage inside container.
 RUN sed -e 's|^#mount_program|mount_program|g' \
@@ -113,7 +99,6 @@ RUN sed -e 's|^#mount_program|mount_program|g' \
            -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
            /usr/share/containers/storage.conf \
            > /etc/containers/storage.conf
-
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
@@ -133,7 +118,18 @@ RUN set -ex \
 
 ADD entrypoint.sh /bin/entrypoint
 RUN chmod +x /bin/entrypoint
-ENTRYPOINT ["entrypoint"]
 
 # Switch from root
 USER runner
+WORKDIR /tmp
+
+# Collections
+RUN ansible-galaxy collection download \ 
+ansible.posix \
+community.docker \
+community.general \
+community.kubernetes 
+RUN cd collections && ansible-galaxy collection install -r requirements.yml
+RUN rm -rf collections
+
+ENTRYPOINT ["entrypoint"]
