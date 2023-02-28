@@ -41,7 +41,6 @@ RUN python3.9 -m ensurepip
 RUN pip3.9 install --upgrade pip
 RUN pip3.9 install setuptools_scm
 
-WORKDIR /tmp
 COPY bashrc /home/runner/.bashrc
 
 RUN mkdir -p ~/.ansible/roles /usr/share/ansible/roles /etc/ansible/roles && \
@@ -88,6 +87,7 @@ RUN for file in \
       /etc/group ; \
     do touch $file ; chmod g+rw $file ; chgrp root $file ; done
 
+WORKDIR /tmp
 
 # Collections
 RUN ansible-galaxy collection download \ 
@@ -95,7 +95,7 @@ ansible.posix \
 community.general \
 community.kubernetes 
 RUN cd collections && ansible-galaxy collection install -r requirements.yml
-RUN cd .. && rm -rf collections
+RUN rm -rf collections
 
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
