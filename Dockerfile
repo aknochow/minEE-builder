@@ -13,6 +13,7 @@ microdnf install -y \
 dumb-init \
 fuse-overlayfs \
 git-core \
+jq \
 make \
 nano \
 ncurses \
@@ -96,13 +97,12 @@ RUN for dir in \
       /runner/inventory \
       /runner/project \
       /runner/artifacts ; \
-    do mkdir -m 0775 -p $dir ; chmod -R g+rwx $dir ; chown -R runner $dir ; chgrp -R root $dir ; done && \
-    for file in \
+    do mkdir -m 0775 -p $dir ; chmod -R g+rwx $dir ; chown -R runner $dir ; chgrp -R root $dir ; done
+RUN for file in \
       /home/runner/.ansible/galaxy_token \
       /etc/passwd \
       /etc/group ; \
     do touch $file ; chmod g+rw $file ; chgrp root $file ; done
-#COPY collections/ /usr/share/ansible/collections
 
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
