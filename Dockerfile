@@ -6,10 +6,8 @@ FROM $EE_BASE_IMAGE
 LABEL org.opencontainers.image.source https://github.com/aknochow/minee-builder/Dockerfile
 
 USER root
-RUN \
-microdnf update -y && \
-microdnf -y upgrade && \
-microdnf install -y \
+RUN microdnf update -y && microdnf -y upgrade
+RUN microdnf install -y \
 dumb-init \
 fuse-overlayfs \
 git-core \
@@ -17,47 +15,34 @@ golang \
 jq \
 make \
 nano \
-ncurses \
 podman \
 podman-docker \
 python3 \
 python3.9 \
-python3-bcrypt \
-python3-cffi \
-python3-markupsafe \
-python3-pip \
-python3-pynacl \
-python3-pyrsistent \
-python3-pyyaml \
-python3-ruamel-yaml \
-python3-setuptools_scm \
-python3-wheel \
 shadow-utils \
 tree \
-vim \
-&& microdnf clean all
+vim
+RUN microdnf clean all
 
-RUN \
-pip install \
-ansible-lint[lock]==6.12.2 \
+# Python 3.11 (system default)
+RUN python3 -m ensurepip
+RUN pip3 install --upgrade pip
+RUN pip3 install --progress-bar=off --compile --only-binary :all: \
+ansible-lint \
 ansible-runner==2.3.1 \
-paramiko==3.0.0 \
-jmespath==1.0.1 \
-setuptools_scm
-RUN pip install --upgrade pip
+paramiko \
+pyyaml \
+jmespath \
+setuptools_scm \
+wheel
 
-# EEUSER root
+# Python 3.9 (required by awx build tools)
+RUN python3.9 -m ensurepip
+RUN pip3.9 install --upgrade pip
+RUN pip3.9 install setuptools_scm
+
 WORKDIR /tmp
 COPY bashrc /home/runner/.bashrc
-
-RUN \
-pip3 install --progress-bar=off --compile --only-binary :all: \
-ansible-lint[lock]==6.12.2 \
-ansible-runner==2.3.1 \
-paramiko==3.0.0 \
-jmespath==1.0.1 \
-setuptools_scm
-RUN pip3 install --upgrade pip
 
 RUN mkdir -p ~/.ansible/roles /usr/share/ansible/roles /etc/ansible/roles && \
 rm -rf $(pip3 cache dir) && \
@@ -103,9 +88,14 @@ RUN for file in \
       /etc/group ; \
     do touch $file ; chmod g+rw $file ; chgrp root $file ; done
 
+
 # Collections
-ADD collections /home/runner/.ansible/collections
-RUN ansible-galaxy collection install /home/runner/.ansible/collections/*    
+RUN ansible-galaxy collection download \ 
+ansible.posix \
+community.general \
+community.kubernetes 
+RUN cd collections && ansible-galaxy collection install -r requirements.yml
+RUN cd .. && rm -rf collections
 
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
@@ -135,6 +125,7 @@ RUN set -ex \
 && ansible-runner --version \
 && podman --version \
 && python3 --version \
+&& python3.9 --version \
 && git --version \
 && rpm -qa \
 && uname -a
