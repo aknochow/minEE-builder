@@ -92,6 +92,7 @@ WORKDIR /tmp
 # Collections
 RUN ansible-galaxy collection download \ 
 ansible.posix \
+community.docker \
 community.general \
 community.kubernetes 
 RUN cd collections && ansible-galaxy collection install -r requirements.yml
