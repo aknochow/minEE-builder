@@ -13,6 +13,7 @@ microdnf install -y \
 dumb-init \
 fuse-overlayfs \
 git-core \
+golang \ 
 jq \
 make \
 nano \
@@ -32,6 +33,7 @@ python3-ruamel-yaml \
 python3-setuptools_scm \
 python3-wheel \
 shadow-utils \
+tree \
 vim \
 && microdnf clean all
 
@@ -44,11 +46,8 @@ jmespath==1.0.1 \
 setuptools_scm
 RUN pip install --upgrade pip
 
-RUN ansible-galaxy collection install community.general
-
 # EEUSER root
 WORKDIR /tmp
-
 COPY bashrc /home/runner/.bashrc
 
 RUN \
@@ -103,6 +102,10 @@ RUN for file in \
       /etc/passwd \
       /etc/group ; \
     do touch $file ; chmod g+rw $file ; chgrp root $file ; done
+
+# Collections
+ADD collections /home/runner/.ansible/collections
+RUN ansible-galaxy collection install /home/runner/.ansible/collections/*    
 
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
