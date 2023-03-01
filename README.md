@@ -1,1 +1,1 @@
-# minee-builder
+# minEE - minimal Execution Environment

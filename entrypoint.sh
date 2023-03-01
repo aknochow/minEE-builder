@@ -35,6 +35,8 @@ else
   set -e
 fi
 
+export CONTAINER_ID=$(uname -n)
+
 # current user might not exist in /etc/passwd at all
 # podman implicit when passing custom uid on macos :>
 # 501:*:501:0:container user:/home/runner:/bin/sh
@@ -79,8 +81,12 @@ if [[ -n "${AWX_ISOLATED_DATA_DIR:-}" && -d ${AWX_ISOLATED_DATA_DIR} ]]; then
     ansible --version 2> /dev/null | head -n 1 > "${AWX_ISOLATED_DATA_DIR}/ansible_version.txt"
 fi
 
-if [ "$STAGEREPO" != "" ]; then
+# Stage (clone) github repositories and optionally forks at entrypoint
+if [ "$STAGEREPO" != "" ] && [ "$STAGEBRANCH" != "" ]; then
     git clone -b $STAGEBRANCH https://github.com/$STAGEREPO
+fi
+if [ "$STAGEREPO" != "" ] && [ "$STAGEBRANCH" == "" ]; then
+    git clone https://github.com/$STAGEREPO
 fi
 
 for SCRIPT in /usr/local/bin/dumb-init /usr/bin/dumb-init /bin/dumb-init; do
