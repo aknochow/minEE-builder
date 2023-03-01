@@ -17,7 +17,7 @@ RUN microdnf clean all
 RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
-requests setuptools_scm
+docker requests setuptools_scm
 
 # Python 3.9 (required by awx setuptools scm check)
 RUN python3.9 -m ensurepip && python3.9 -m pip install --upgrade pip
