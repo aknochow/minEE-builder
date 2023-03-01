@@ -15,8 +15,7 @@ golang \
 jq \
 make \
 nano \
-podman \
-podman-docker \
+podman podman-docker \
 python3.9 \
 shadow-utils \
 tree \
@@ -29,9 +28,10 @@ RUN pip3 install --upgrade pip
 RUN pip3 install --progress-bar=off --compile --only-binary :all: \
 ansible-lint \
 ansible-runner==2.3.1 \
+jmespath \
 paramiko \
 pyyaml \
-jmespath \
+requests \
 setuptools_scm \
 wheel
 
@@ -126,7 +126,6 @@ WORKDIR /tmp
 # Collections
 RUN ansible-galaxy collection download \ 
 ansible.posix \
-community.docker \
 community.general \
 community.kubernetes 
 RUN cd collections && ansible-galaxy collection install -r requirements.yml
