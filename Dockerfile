@@ -10,7 +10,7 @@ USER root
 # dnf packages
 RUN microdnf update -y && microdnf -y upgrade
 RUN microdnf install -y \
-fuse-overlayfs golang make nano podman podman-docker python3.9
+fuse-overlayfs golang kubernetes-client make nano podman podman-docker python3.9
 RUN microdnf clean all
 
 # Python (system default)
