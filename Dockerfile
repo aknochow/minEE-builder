@@ -35,7 +35,7 @@ requests \
 setuptools_scm \
 wheel
 
-# Python 3.9 (required by awx build tools)
+# Python 3.9 (required by awx setuptools scm check)
 RUN python3.9 -m ensurepip
 RUN pip3.9 install --upgrade pip
 RUN pip3.9 install setuptools_scm
@@ -115,6 +115,9 @@ RUN set -ex \
 && git --version \
 && rpm -qa \
 && uname -a
+
+# Play alias. Saving keystrokes since 2015*
+RUN ln -s /usr/local/bin/ansible-playbook /usr/local/bin/play
 
 ADD entrypoint.sh /bin/entrypoint
 RUN chmod +x /bin/entrypoint
