@@ -46,7 +46,7 @@ WORKDIR /work
 
 # Ansible-Galaxy Collections
 RUN ansible-galaxy collection download \ 
-ansible.posix community.general community.kubernetes 
+ansible.posix community.general community.kubernetes community.docker
 RUN cd collections && ansible-galaxy collection install -r requirements.yml
 RUN rm -rf collections
 
