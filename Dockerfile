@@ -25,7 +25,6 @@ RUN microdnf clean all
 RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
-docker \
 requests \
 setuptools_scm
 
@@ -68,7 +67,6 @@ RUN ansible-galaxy collection download \
 ansible.posix \
 community.general \
 community.kubernetes \
-community.docker \
 containers.podman
 RUN cd collections && ansible-galaxy collection install -r requirements.yml
 RUN rm -rf collections
