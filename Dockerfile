@@ -25,6 +25,8 @@ RUN microdnf clean all
 RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
+kubernetes \
+oauthlib>=3.2.0 \
 requests \
 setuptools_scm
 
