@@ -1,11 +1,11 @@
 # minEE-Builder (minimal Execution Environment Builder)
-# CentOS Stream 9 flavor (cs9)
+# Fedora 37 flavor (f37)
 
-# Base minEE - https://github.com/aknochow/minee
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee
+# Base minEE - https://github.com/aknochow/minEE
+ARG EE_BASE_IMAGE=quay.io/aknochow/minee:f37
 FROM $EE_BASE_IMAGE
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/cs9/Containerfile
+LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/f37/Containerfile
 
 USER root
 
@@ -19,12 +19,13 @@ make \
 nano \
 podman \
 podman-docker \
+python3.9 \
 vim
 RUN microdnf clean all
 # Install latest stable kubectl rpm
 RUN rpm -ivh https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/rpm/$(uname -m)/kubectl-$(curl -L -s https://dl.k8s.io/release/stable.txt | sed 's/v//g')-0.$(uname -m).rpm
 
-# Python
+# Python (default 3.11)
 RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
@@ -33,6 +34,11 @@ kubernetes \
 oauthlib \
 requests \
 setuptools_scm
+
+# Python 3.9
+RUN python3.9 -m ensurepip
+RUN python3.9 -m pip install --upgrade pip
+RUN python3.9 -m pip install setuptools_scm
 
 # Podman
 RUN install -d -m 0775 -o runner -g root \

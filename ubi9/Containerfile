@@ -1,11 +1,11 @@
 # minEE-Builder (minimal Execution Environment Builder)
-# CentOS Stream 9 flavor (cs9)
+# Red Hat 9 flavor (ubi9)
 
-# Base minEE - https://github.com/aknochow/minee
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee
+# Base minEE - https://github.com/aknochow/minEE
+ARG EE_BASE_IMAGE=quay.io/aknochow/minee:ubi9
 FROM $EE_BASE_IMAGE
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/cs9/Containerfile
+LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/ubi9/Containerfile
 
 USER root
 

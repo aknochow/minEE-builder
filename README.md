@@ -1,1 +1,1 @@
-# minee-builder
+# minEE-builder
