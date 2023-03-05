@@ -57,7 +57,7 @@ RUN sed \
 -e 's|^#mount_program|mount_program|g' \
 -e '/additionalimage.*/a "/var/lib/shared",' \
 -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
-/etc/containers/storage.conf
+/usr/share/containers/storage.conf > /etc/containers/storage.conf
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
