@@ -1,8 +1,8 @@
 # minEE-Builder (minimal Execution Environment Builder)
-# Red Hat 9 flavor (ubi9)
+# Red Hat 9 flavor (ubi9-arm)
 
 # Base minEE - https://github.com/aknochow/minEE
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee:ubi9
+ARG EE_BASE_IMAGE=quay.io/aknochow/minee:ubi9-arm
 FROM $EE_BASE_IMAGE
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/ubi9/Containerfile

@@ -1,8 +1,8 @@
 # minEE-Builder (minimal Execution Environment Builder)
-# Fedora 37 flavor (f37)
+# Fedora 37 flavor (f37-arm)
 
 # Base minEE - https://github.com/aknochow/minEE
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee:f37
+ARG EE_BASE_IMAGE=quay.io/aknochow/minee:f37-arm
 FROM $EE_BASE_IMAGE
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/f37/Containerfile
