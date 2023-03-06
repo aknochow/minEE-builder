@@ -20,6 +20,7 @@ nano \
 podman \
 podman-docker \
 python3.9 \
+tree \
 vim
 RUN microdnf clean all
 # Install latest stable kubectl rpm

@@ -19,6 +19,7 @@ make \
 nano \
 podman \
 podman-docker \
+tree \
 vim
 RUN microdnf clean all
 # Install latest stable kubectl rpm
