@@ -5,18 +5,21 @@ A builder image based on minEE (https://github.com/aknochow/minEE)
 This image can be used as an Execution Environment in AWX or as a local dev environment for building and testing images.
 
 ## Flavors:
-#### cs9 - CentOS Stream 9 (default/latest)
-#### ubi9 - Red Hat 9.1
+#### cs9 - CentOS Stream 9 (default/latest) 
+`ansible python version: 3.9.16 (/usr/bin/python3)`
+#### ubi9 - Red Hat 9.1 
+`ansible python version: 3.9.14 (/usr/bin/python3)`
 #### f37 - Fedora 37
+`ansible python version: 3.11.2 (/usr/bin/python3)`
 
 ## Image details
 ### x86_64
 ```
-REPOSITORY                       TAG      IMAGE ID       CREATED             SIZE
-quay.io/aknochow/minee-builder   f37      b6f4a883d6d1   11 minutes ago      1.73 GB
-quay.io/aknochow/minee-builder   ubi9     9540827b968a   13 minutes ago      1.17 GB
-quay.io/aknochow/minee-builder   cs9      a47a9668da87   15 minutes ago      1.24 GB
-quay.io/aknochow/minee-builder   latest   a47a9668da87   15 minutes ago      1.24 GB
+REPOSITORY                                TAG               IMAGE ID       CREATED             SIZE
+quay.io/aknochow/minee-builder            latest            312822a6841b   About an hour ago   1.22 GB
+quay.io/aknochow/minee-builder            cs9               312822a6841b   About an hour ago   1.22 GB
+quay.io/aknochow/minee-builder            ubi9              0fbec3537645   About an hour ago   1.15 GB
+quay.io/aknochow/minee-builder            f37               5d5d081da712   About an hour ago   1.7 GB
 ```
 _Built with:_
 ```
