@@ -13,6 +13,7 @@ USER root
 RUN microdnf -y update  
 RUN microdnf -y upgrade
 RUN microdnf -y install \
+buildah \
 fuse-overlayfs \
 golang \
 make \
