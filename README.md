@@ -15,11 +15,11 @@ This image can be used as an Execution Environment in AWX or as a local dev envi
 ## Image details
 ### x86_64
 ```
-REPOSITORY                                TAG               IMAGE ID       CREATED             SIZE
-quay.io/aknochow/minee-builder            latest            312822a6841b   About an hour ago   1.22 GB
-quay.io/aknochow/minee-builder            cs9               312822a6841b   About an hour ago   1.22 GB
-quay.io/aknochow/minee-builder            ubi9              0fbec3537645   About an hour ago   1.15 GB
-quay.io/aknochow/minee-builder            f37               5d5d081da712   About an hour ago   1.7 GB
+REPOSITORY                            TAG           IMAGE ID       CREATED             SIZE
+quay.io/aknochow/minee-builder        latest        312822a6841b   About an hour ago   1.22 GB
+quay.io/aknochow/minee-builder        cs9           312822a6841b   About an hour ago   1.22 GB
+quay.io/aknochow/minee-builder        ubi9          0fbec3537645   About an hour ago   1.15 GB
+quay.io/aknochow/minee-builder        f37           5d5d081da712   About an hour ago   1.7 GB
 ```
 _Built with:_
 ```
