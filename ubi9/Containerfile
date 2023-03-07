@@ -13,12 +13,14 @@ USER root
 RUN microdnf -y update  
 RUN microdnf -y upgrade
 RUN microdnf -y install \
+buildah \
 fuse-overlayfs \
 golang \
 make \
 nano \
 podman \
 podman-docker \
+tree \
 vim
 RUN microdnf clean all
 # Install latest stable kubectl rpm
