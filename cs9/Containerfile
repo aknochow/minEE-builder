@@ -31,6 +31,7 @@ RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
 dumb-init \
+jwt \
 kubernetes \
 oauthlib \
 requests \
@@ -53,7 +54,7 @@ RUN sed \
 -e 's|^#mount_program|mount_program|g' \
 -e '/additionalimage.*/a "/var/lib/shared",' \
 -e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
-/etc/containers/storage.conf
+/usr/share/containers/storage.conf > /etc/containers/storage.conf
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
