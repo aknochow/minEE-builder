@@ -14,7 +14,6 @@ RUN microdnf -y update
 RUN microdnf -y upgrade
 RUN microdnf -y install \
 buildah \
-fuse-overlayfs \
 golang \
 make \
 nano \
@@ -36,7 +35,6 @@ requests \
 setuptools_scm
 
 # Podman
-RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
 RUN install -d -m 0775 -o runner -g root \
 /home/runner/.config/containers \
 /home/runner/.local/share/containers \
@@ -45,18 +43,19 @@ RUN install -d -m 0775 -o runner -g root \
 /var/lib/shared/vfs-images \
 /var/lib/shared/vfs-layers 
 RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock,vfs-images/images.lock,vfs-layers/layers.lock}
+# Set up registries.conf and containers.conf
+RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
-# Changes here are required for running with fuse-overlay storage inside container.
-RUN sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' /etc/containers/storage.conf
-RUN sed -i 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' /etc/containers/storage.conf
+RUN cp /etc/containers/registries.conf /home/runner/.config/containers/registries.conf
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
 VOLUME /home/runner/.local/share/containers
 RUN chmod 644 /etc/containers/containers.conf
-RUN chown -R runner:root /home/runner
+RUN chown -R runner:root /home/runner /var/lib/containers
+RUN chmod -R g+rw /home/runner /var/lib/containers
 
 # Set up entrypoint
 COPY entrypoint /bin/entrypoint
