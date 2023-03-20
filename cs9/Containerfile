@@ -38,6 +38,7 @@ requests \
 setuptools_scm
 
 # Podman
+RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
 RUN install -d -m 0775 -o runner -g root \
 /home/runner/.config/containers \
 /home/runner/.local/share/containers \
@@ -50,11 +51,8 @@ ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
 # Changes here are required for running with fuse-overlay storage inside container.
-RUN sed \
--e 's|^#mount_program|mount_program|g' \
--e '/additionalimage.*/a "/var/lib/shared",' \
--e 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' \
-/usr/share/containers/storage.conf > /etc/containers/storage.conf
+RUN sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' /etc/containers/storage.conf
+RUN sed -i 's|^mountopt[[:space:]]*=.*$|mountopt = "nodev,fsync=0"|g' /etc/containers/storage.conf
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers

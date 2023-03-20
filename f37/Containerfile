@@ -43,6 +43,7 @@ RUN python3.9 -m pip install --upgrade pip
 RUN python3.9 -m pip install setuptools_scm
 
 # Podman
+RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
 RUN install -d -m 0775 -o runner -g root \
 /home/runner/.config/containers \
 /home/runner/.local/share/containers \
