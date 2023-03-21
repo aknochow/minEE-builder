@@ -37,7 +37,7 @@ setuptools_scm
 
 # Podman
 RUN install -d -m 0775 -o runner -g root \
-/home/runner/.config/containers \
+/home/runner/.config/containers/containers.conf.d \
 /home/runner/.local/share/containers \
 /var/lib/shared/overlay-images \
 /var/lib/shared/overlay-layers \
@@ -61,6 +61,9 @@ RUN chmod -R g+rw /home/runner /var/lib/containers
 # Set up entrypoint
 COPY entrypoint /bin/entrypoint
 RUN chmod +x /bin/entrypoint
+
+# Set built on date
+RUN echo 'printf "minEE-Builder (ubi9) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
 
 # Switch to runner user
 USER runner

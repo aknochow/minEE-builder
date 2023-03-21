@@ -69,6 +69,9 @@ RUN chmod -R g+rw /home/runner /var/lib/containers
 COPY entrypoint /bin/entrypoint
 RUN chmod +x /bin/entrypoint
 
+# Set built on date
+RUN echo 'printf "minEE-Builder (f37) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
+
 # Switch to runner user
 USER runner
 
