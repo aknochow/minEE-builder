@@ -47,7 +47,7 @@ RUN install -d -m 0775 -o runner -g root \
 RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock,vfs-images/images.lock,vfs-layers/layers.lock}
 # Set up registries.conf and containers.conf
 RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
-RUN sed -i 's|"docker.io"|"quay.io/ansible-ci" , "docker.io"|g' /etc/containers/registries.conf
+RUN printf '\n\n[[registry]]\nlocation = "quay.io/ansible-ci"\n' >> /etc/containers/registries.conf
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
