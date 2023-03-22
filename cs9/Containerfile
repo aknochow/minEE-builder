@@ -52,7 +52,8 @@ RUN printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlo
 RUN ln -s /etc/containers/registries.conf /home/runner/.config/containers/registries.conf
 # Set up containers.conf
 ADD https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable/containers.conf /etc/containers/containers.conf
-RUN chmod 644 /etc/containers/containers.conf /etc/containers/registries.conf
+ADD https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable/podman-containers.conf /home/runner/.config/containers/containers.conf
+#RUN chmod 644 /etc/containers/containers.conf /etc/containers/registries.conf
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
