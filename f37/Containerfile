@@ -52,8 +52,9 @@ RUN install -d -m 0775 -o runner -g root \
 /var/lib/shared/vfs-layers 
 RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock,vfs-images/images.lock,vfs-layers/layers.lock}
 # Set up registries.conf and containers.conf
-RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
-RUN printf '\n\n[[registry]]\nlocation = "quay.io/ansible-ci"\n' >> /etc/containers/registries.conf
+RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="disabled"|g' /etc/containers/registries.conf
+RUN sed -i 's|"docker.io"|"quay.io", "docker.io"|g' /etc/containers/registries.conf
+RUN printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
@@ -71,7 +72,7 @@ COPY entrypoint /bin/entrypoint
 RUN chmod +x /bin/entrypoint
 
 # Set built on date
-RUN echo 'printf "minEE-Builder (f37) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
+RUN echo 'printf "minEE-Builder (ubi9) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
 
 # Switch to runner user
 USER runner
