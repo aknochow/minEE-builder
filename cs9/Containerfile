@@ -45,18 +45,20 @@ RUN install -d -m 0775 -o runner -g root \
 /var/lib/shared/vfs-images \
 /var/lib/shared/vfs-layers 
 RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock,vfs-images/images.lock,vfs-layers/layers.lock}
-# Set up registries.conf and containers.conf
-RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="permissive"|g' /etc/containers/registries.conf
-RUN printf '\n\n[[registry]]\nlocation = "quay.io/ansible-ci"\n' >> /etc/containers/registries.conf
-ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
-ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
-ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
-RUN cp /etc/containers/registries.conf /home/runner/.config/containers/registries.conf
+# Set up registries.conf
+RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="disabled"|g' /etc/containers/registries.conf
+RUN sed -i 's|"docker.io"|"quay.io", "docker.io"|g' /etc/containers/registries.conf
+RUN printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf
+RUN ln -s /etc/containers/registries.conf /home/runner/.config/containers/registries.conf
+# Set up containers.conf
+#ADD https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable/containers.conf /etc/containers/containers.conf
+#ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
+
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
 VOLUME /var/lib/containers
 VOLUME /home/runner/.local/share/containers
-RUN chmod 644 /etc/containers/containers.conf
+#RUN chmod 644 /etc/containers/containers.conf /etc/containers/registries.conf
 RUN chown -R runner:root /home/runner /var/lib/containers
 RUN chmod -R g+rw /home/runner /var/lib/containers
 
