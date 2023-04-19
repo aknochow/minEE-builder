@@ -37,6 +37,7 @@ setuptools_scm
 
 # Podman
 RUN install -d -m 0775 -o runner -g root \
+/home/runner/.ansible/tmp \
 /home/runner/.config/containers/containers.conf.d \
 /home/runner/.local/share/containers \
 /var/lib/shared/overlay-images \
