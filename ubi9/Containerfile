@@ -74,6 +74,7 @@ USER runner
 # Ansible-Galaxy Collections
 RUN ansible-galaxy collection download \ 
 ansible.posix \
+awx.awx \
 community.general \
 community.kubernetes \
 containers.podman
