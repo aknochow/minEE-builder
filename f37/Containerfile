@@ -23,8 +23,11 @@ python3.9 \
 tree \
 vim
 RUN microdnf clean all
+
+# Install kubectl v1.25.9
+RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 # Install latest stable kubectl rpm
-RUN rpm -ivh https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/rpm/$(uname -m)/kubectl-$(curl -L -s https://dl.k8s.io/release/stable.txt | sed 's/v//g')-0.$(uname -m).rpm
+#RUN rpm -ivh https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/rpm/$(uname -m)/kubectl-$(curl -L -s https://dl.k8s.io/release/stable.txt | sed 's/v//g')-0.$(uname -m).rpm
 
 # Python (default 3.11)
 RUN python3 -m ensurepip

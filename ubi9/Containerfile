@@ -21,8 +21,9 @@ podman \
 podman-docker \
 vim
 RUN microdnf clean all
-# Install latest stable kubectl rpm
-RUN rpm -ivh https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/rpm/$(uname -m)/kubectl-$(curl -L -s https://dl.k8s.io/release/stable.txt | sed 's/v//g')-0.$(uname -m).rpm
+
+# Install kubectl v1.25.9
+RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 
 # Python
 RUN python3 -m ensurepip
