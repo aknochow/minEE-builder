@@ -29,6 +29,7 @@ RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && chmod 
 RUN python3 -m ensurepip
 RUN pip3 install --upgrade pip
 RUN python3 -m pip install --progress-bar=off --compile --only-binary :all: \
+build \
 dumb-init \
 jwt \
 kubernetes \
