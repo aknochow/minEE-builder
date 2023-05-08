@@ -37,6 +37,9 @@ oauthlib \
 requests \
 setuptools_scm
 
+# ansible-builder v3
+RUN python3 -m pip install --progress-bar=off --pre ansible-builder
+
 # Podman
 RUN install -d -m 0775 -o runner -g root \
 /home/runner/.ansible/tmp \
