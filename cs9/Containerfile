@@ -45,6 +45,7 @@ RUN python3 -m pip install --progress-bar=off --pre ansible-builder
 RUN install -d -m 0775 -o runner -g root \
 /home/runner/.config/containers \
 /home/runner/.local/share/containers \
+/output \
 /var/lib/shared/overlay-images \
 /var/lib/shared/overlay-layers \
 /var/lib/shared/vfs-images \
