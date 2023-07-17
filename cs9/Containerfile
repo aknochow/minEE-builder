@@ -23,9 +23,6 @@ tree \
 vim
 RUN microdnf clean all
 
-# Install go-task
-RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
-
 # Install kubectl v1.25.9
 RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 
