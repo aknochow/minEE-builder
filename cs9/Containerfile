@@ -17,6 +17,7 @@ buildah \
 golang \
 make \
 nano \
+npm \
 podman \
 podman-docker \
 tree \
@@ -54,7 +55,10 @@ RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock
 # Set up registries.conf and containers.conf
 RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="disabled"|g' /etc/containers/registries.conf
 RUN sed -i 's|"docker.io"|"quay.io", "docker.io"|g' /etc/containers/registries.conf
+RUN printf '\n[[registry]]\nlocation = "quay.io/alpine"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/alpine"' >> /etc/containers/registries.conf
 RUN printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf
+RUN printf '\n[[registry]]\nlocation = "quay.io/nginx"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/nginx"' >> /etc/containers/registries.conf
+RUN printf '\n[[registry]]\nlocation = "quay.io/node"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/node"' >> /etc/containers/registries.conf
 ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
