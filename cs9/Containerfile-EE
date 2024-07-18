@@ -1,58 +1,42 @@
- # minEE-Builder (minimal Execution Environment Builder)
-# CentOS Stream 9 flavor (cs9)
 
-# Base minEE - https://github.com/aknochow/minee
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee
-FROM $EE_BASE_IMAGE
-# https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/cs9/Containerfile
+FROM quay.io/ansible/awx-ee:latest
 
 USER root
 
-# Install gcloud cli
-COPY google-cloud-sdk.repo /etc/yum.repos.d/google-cloud-sdk.repo
-
 # dnf packages
-RUN microdnf -y update && \
-microdnf -y upgrade && \
-microdnf module -y enable nodejs:18/common && \
-microdnf -y install \
+RUN dnf -y update; \
+dnf -y upgrade; \
+dnf install -y --nodocs --setopt=install_weak_deps=False \
 buildah \
-google-cloud-sdk-gke-gcloud-auth-plugin \
 golang \
 make \
 nano \
 npm \
-podman \
+podman --exclude container-selinux \
 podman-docker \
-skopeo \
 tree \
-vim && \
-microdnf clean all
+vim; \
+dnf clean all
+
+# Install kubectl v1.25.9
+RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && \
+chmod +x ./kubectl && \
+mv ./kubectl /usr/local/bin/kubectl
 
 # Python
 RUN python3 -m ensurepip && \
 pip3 install --upgrade pip && \
 python3 -m pip install --progress-bar=off --compile --only-binary :all: \
-boto3 \
-botocore \
 build \
 dumb-init \
-google-auth \
 jwt \
 kubernetes \
 oauthlib \
-openstacksdk \
-#python-openstackclient \
 requests \
 setuptools_scm && \ 
 python3 -m pip install --progress-bar=off --pre ansible-builder
 
-# Install kubectl
-ARG KUBE_VERSION=v1.27.10
-RUN curl -LO https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl && \
-chmod +x ./kubectl && \
-mv ./kubectl /usr/local/bin/kubectl
+RUN useradd runner
 
 # Podman
 RUN install -d -m 0775 -o runner -g root \
@@ -72,20 +56,21 @@ printf '\n[[registry]]\nlocation = "quay.io/alpine"\n[[registry.mirror]]\nlocati
 printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf && \
 printf '\n[[registry]]\nlocation = "quay.io/nginx"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/nginx"' >> /etc/containers/registries.conf && \
 printf '\n[[registry]]\nlocation = "quay.io/node"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/node"' >> /etc/containers/registries.conf
-ARG _REPO_URL="https://raw.githubusercontent.com/containers/image_build/main/podman"
+ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
-RUN cp /etc/containers/registries.conf /home/runner/.config/containers/registries.conf && \
+RUN cp /etc/containers/registries.conf /home/runner/.config/containers/registries.conf.d/registries.conf && \
 chmod 644 /etc/containers/containers.conf && \
-chown -R runner:root /home/runner /var/lib/containers && \
-chmod -R g+rw /home/runner /var/lib/containers
+chown -R runner:root /runner /home/runner /var/lib/containers && \
+chmod -R g+rw /runner /home/runner /var/lib/containers
 # Note VOLUME options must always happen after the chown call above
 # RUN commands can not modify existing volumes
+
 VOLUME /var/lib/containers
 VOLUME /home/runner/.local/share/containers
-# RUN chmod 644 /etc/containers/containers.conf
-# RUN chown -R runner:root /home/runner /var/lib/containers
-# RUN chmod -R g+rw /home/runner /var/lib/containers
+RUN chmod 644 /etc/containers/containers.conf
+RUN chown -R runner:root /runner /home/runner /var/lib/containers
+RUN chmod -R g+rw /runner /home/runner /var/lib/containers
 
 # Set up entrypoint
 COPY entrypoint /bin/entrypoint
@@ -98,16 +83,11 @@ USER runner
 
 # Ansible-Galaxy Collections
 RUN ansible-galaxy collection download \ 
-amazon.aws \
 ansible.posix \
 awx.awx \
 community.general \
 community.kubernetes \
-community.postgresql \
-containers.podman \
-google.cloud \
-infra.ah_configuration \
-openstack.cloud && \
+containers.podman && \
 cd collections && ansible-galaxy collection install -r requirements.yml && \
 rm -rf collections
 
