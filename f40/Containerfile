@@ -15,7 +15,6 @@ COPY google-cloud-sdk.repo /etc/yum.repos.d/google-cloud-sdk.repo
 # dnf packages
 RUN microdnf -y update && \
 microdnf -y upgrade && \
-microdnf module -y enable nodejs:18/common && \
 microdnf -y install \
 buildah \
 google-cloud-sdk-gke-gcloud-auth-plugin \
