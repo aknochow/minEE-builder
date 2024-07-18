@@ -1,11 +1,11 @@
-# minEE-Builder (minimal Execution Environment Builder)
-# CentOS Stream 9 flavor (cs9)
+ # minEE-Builder (minimal Execution Environment Builder)
+# Fedora 40 flavor (f40)
 
 # Base minEE - https://github.com/aknochow/minee
-ARG EE_BASE_IMAGE=quay.io/aknochow/minee:cs9
+ARG EE_BASE_IMAGE=quay.io/aknochow/minee:f40
 FROM $EE_BASE_IMAGE
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/cs9/Containerfile
+LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/blob/main/f40/Containerfile
 
 USER root
 
@@ -15,7 +15,6 @@ COPY google-cloud-sdk.repo /etc/yum.repos.d/google-cloud-sdk.repo
 # dnf packages
 RUN microdnf -y update && \
 microdnf -y upgrade && \
-microdnf module -y enable nodejs:18/common && \
 microdnf -y install \
 buildah \
 google-cloud-sdk-gke-gcloud-auth-plugin \
@@ -91,7 +90,7 @@ VOLUME /home/runner/.local/share/containers
 COPY entrypoint /bin/entrypoint
 RUN chmod +x /bin/entrypoint && \
 # Set built on date
-echo 'printf "minEE-Builder (cs9) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
+echo 'printf "minEE-Builder (f40) (built on '$(date)')\n"' >> /etc/profile.d/prompt_built_on.sh
 
 # Switch to runner user
 USER runner

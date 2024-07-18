@@ -9,21 +9,32 @@ LABEL org.opencontainers.image.source https://github.com/aknochow/minEE-builder/
 
 USER root
 
+# Install gcloud cli
+COPY google-cloud-sdk.repo /etc/yum.repos.d/google-cloud-sdk.repo
+
 # dnf packages
-RUN microdnf -y update  
-RUN microdnf -y upgrade
-RUN microdnf -y install \
+RUN microdnf -y update && \
+microdnf -y upgrade && \
+microdnf module -y enable nodejs:18/common && \
+microdnf -y install \
 buildah \
+google-cloud-sdk-gke-gcloud-auth-plugin \
 golang \
 make \
 nano \
+npm \
 podman \
 podman-docker \
-vim
-RUN microdnf clean all
+skopeo \
+tree \
+vim && \
+microdnf clean all
 
-# Install kubectl v1.25.9
-RUN curl -LO https://dl.k8s.io/release/v1.25.9/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+# Install kubectl
+ARG KUBE_VERSION=v1.27.10
+RUN curl -LO https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl && \
+chmod +x ./kubectl && \
+mv ./kubectl /usr/local/bin/kubectl
 
 # Python
 RUN python3 -m ensurepip
@@ -50,11 +61,15 @@ RUN install -d -m 0775 -o runner -g root \
 /var/lib/shared/vfs-images \
 /var/lib/shared/vfs-layers 
 RUN touch /var/lib/shared/{overlay-images/images.lock,overlay-layers/layers.lock,vfs-images/images.lock,vfs-layers/layers.lock}
+
 # Set up registries.conf and containers.conf
-RUN sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="disabled"|g' /etc/containers/registries.conf
-RUN sed -i 's|"docker.io"|"quay.io", "docker.io"|g' /etc/containers/registries.conf
-RUN printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf
-ARG _REPO_URL="https://raw.githubusercontent.com/containers/podman/main/contrib/podmanimage/stable"
+sed -i -r 's|short-name-mode ?= ?"enforcing"|short-name-mode="disabled"|g' /etc/containers/registries.conf && \
+sed -i 's|"docker.io"|"quay.io", "docker.io"|g' /etc/containers/registries.conf && \
+printf '\n[[registry]]\nlocation = "quay.io/alpine"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/alpine"' >> /etc/containers/registries.conf && \
+printf '\n[[registry]]\nlocation = "quay.io/golang"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/golang"' >> /etc/containers/registries.conf && \
+printf '\n[[registry]]\nlocation = "quay.io/nginx"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/nginx"' >> /etc/containers/registries.conf && \
+printf '\n[[registry]]\nlocation = "quay.io/node"\n[[registry.mirror]]\nlocation="quay.io/ansible-ci/node"' >> /etc/containers/registries.conf
+ARG _REPO_URL="https://raw.githubusercontent.com/containers/image_build/main/podman"
 ADD $_REPO_URL/containers.conf /etc/containers/containers.conf
 ADD $_REPO_URL/podman-containers.conf /home/runner/.config/containers/containers.conf
 RUN cp /etc/containers/registries.conf /home/runner/.config/containers/registries.conf
